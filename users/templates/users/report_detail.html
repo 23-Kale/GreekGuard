@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+{% bootstrap_messages %}
+{% load static %}
+<head>
+  <meta charset="UTF-8">
+  <title>Report Details</title>
+  <style>
+    .feedback {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      text-align: center;
+      padding: 20px;
+    }
+  </style>
+</head>
+<body>
+<div class="container py-5">
+{% if user.is_authenticated %}
+  {% if isAdmin %}
+  <h1 class="mb-3">User Report:</h1>
+  <table class="table table-striped table-hover">
+    <thead>
+      <tr>
+        <th>Report ID</th>
+        <th>Report Text</th>
+        <th>Report Time</th>
+          <th>Report Category</th>
+        <th>Report Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>{{ report.id }}</td>
+        <td>{{ report.submission_text }}</td>
+        <td>{{ report.date_reported }}</td>
+      <td>{{ report.category }}</td>
+        <td>
+          {% if not report.is_seen %}
+            New
+          {% elif report.is_resolved %}
+            Resolved
+          {% else %}
+            In Progress
+          {% endif %}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  {% if report.is_resolved %}
+    <p><strong>The explanation (if any) is the following line:</strong></p>
+    <p>{{ report.explanation_text }}</p>
+  {% else %}
+    <form action="{% url 'users:explanation_view' report.id %}" method="post" class="mb-3">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" class="btn btn-success">Change Explanation</button>
+    </form>
+  {% endif %}
+      {% if is_file %}
+        <iframe src="https://greekguard.s3.amazonaws.com/{{report.file_upload}}" width="100%" height="400" frameborder="0" allowfullscreen></iframe>
+          {% else %}
+          <p>No file related to report.</p>
+       {% endif %}
+    {% if isAdmin and current_user == report.user.id %}
+      <!-- Function to trigger a popup -->
+
+<!-- Button trigger modal -->
+<a href="#" class="btn btn-danger mt-3 mb-2" data-bs-toggle="modal" data-bs-target="#deleteConfirmation">Delete Report?</a>
+
+<!-- Modal -->
+<div class="modal fade" id="deleteConfirmation" tabindex="-1" aria-labelledby="deleteConfirmLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="deleteConfirmLabel">Confirm Deletion</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to delete this report?
+      </div>
+      <div class="modal-footer">
+        <a href="#" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</a>
+        <a href="{% url 'users:delete_report' report.id %}" class="btn btn-danger">Delete report </a>
+      </div>
+    </div>
+  </div>
+</div>
+<!--End popup function-->
+    {% endif %}
+    {% if report.is_resolved %}
+      <a href="{% url 'users:change_report_resolved' report.id %}" class="btn btn-info mt-3 mb-2">Re-Open Report?</a>
+    {% else %}
+      <a href="{% url 'users:change_report_resolved' report.id %}" class="btn btn-info mt-3 mb-2">Mark as resolved</a>
+    {% endif %}
+  {% elif current_user == report.user.id %}
+  <!--<h1>Your Report</h1>-->
+  <h1 class="mb-3">Your Report:</h1>
+  <table class="table table-striped table-hover">
+    <thead>
+      <tr>
+        <th>Report ID</th>
+        <th>Report Text</th>
+        <th>Report Time</th>
+          <th>Report Category</th>
+        <th>Report Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>{{ report.id }}</td>
+        <td>{{ report.submission_text }}</td>
+        <td>{{ report.date_reported }}</td>
+        <td>{{ report.category }}</td>
+        <td>
+          {% if not report.is_seen %}
+            New
+          {% elif report.is_resolved %}
+            Resolved
+          {% else %}
+            In Progress
+          {% endif %}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  {% if report.is_resolved %}
+    <p><strong>The explanation (if any) is the following line:</strong></p>
+    <p>{{ report.explanation_text }}</p>
+  {% endif %}
+  {% if is_file %}
+    <iframe src="https://greekguard.s3.amazonaws.com/{{report.file_upload}}" width="100%" height="400" frameborder="0" allowfullscreen></iframe>
+  {% else %}
+    <p>No file related to report.</p>
+  {% endif %}
+<!-- Function to trigger a popup -->
+<!-- Source for modals: https://getbootstrap.com/docs/5.3/components/modal/#how-it-works-->
+
+<!-- Button trigger modal -->
+<a href="#" class="btn btn-danger mt-3 mb-2" data-bs-toggle="modal" data-bs-target="#deleteConfirmation">Delete Report?</a>
+
+<!-- Modal -->
+<div class="modal fade" id="deleteConfirmation" tabindex="-1" aria-labelledby="deleteConfirmLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="deleteConfirmLabel">Confirm Deletion</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to delete this report?
+      </div>
+      <div class="modal-footer">
+        <a href="#" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</a>
+        <a href="{% url 'users:delete_report' report.id %}" class="btn btn-danger">Delete report </a>
+      </div>
+    </div>
+  </div>
+</div>
+<!--End popup function-->
+  <!--<a href="{% url 'users:delete_report' report.id %}" class="btn btn-danger mt-3">Delete Report?</a> -->
+  {% endif %}
+  <a href="/view_reports" class="btn btn-primary mt-3 mb-2">Return to Reports</a>
+</div>
+{% endif %}
+</body>
+<footer class="footer mx-4 mt-5 mb-1 text-center fixed-bottom">
+  <div class="card bg-white text-center">
+    <p class="m-2">This system is a class project, the system is not monitored, and no real information should be submitted. For more information, please visit <a href="https://s24.cs3240.org/project.html" target="_blank">https://s24.cs3240.org/project.html</a></p>
+  </div>
+</footer>
+</html>

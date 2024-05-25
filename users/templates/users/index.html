@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+{% load bootstrap5 %} {% bootstrap_css %} {% bootstrap_javascript %}
+{%bootstrap_messages %} {% load static %}
+
+<head>
+  <title>GreekGuard Login Page</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    .login-card {
+      padding: 2rem;
+
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0,0.1);
+      text-align: center;
+      width: 100%;
+      max-width: 400px;
+    }
+    body {
+      display: flex;
+      justify-content:center;
+      align-items: center;
+      flex-direction: column;
+      height: 100vh;
+      margin: 0;
+      background-color:#f5f5f5;
+      font-family: 'Open Sans', sans-serif
+    }
+    .bottom-links a {
+      text-decoration: none;
+    }
+    .admin-text {
+      font-weight: bold;
+      color: blue;
+    }
+
+    .bottom-links {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    h2 {
+      margin-bottom: 2rem;
+      color: #333;
+    }
+    .btn {
+      width: 100%;
+    }
+    .logo {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      text-align: left;
+      padding: 20px;
+      font-size: 50px;
+      font-family: 'Open Sans', sans-serif;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+
+    .subLogo {
+      position: absolute;
+      left: 5px;
+      top: 75px; 
+      width: 100%;
+      text-align: left;
+      padding: 20px;
+      font-size: 24px;
+      font-family: 'Open Sans', sans-serif;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: rgb(110, 109, 109)
+    }
+    
+  </style>
+</head>
+<body>
+  <div class="logo">GreekGuard
+    <h2 class ="subLogo">A 100% anonymous reporting service</h2>
+  </div>
+  {% load socialaccount %}
+    <div class ="login-card">
+      <h2>GreekGuard Login Page</h2>
+      {% if user.is_authenticated %}
+      <div>
+        {% for group in user.groups.all %}
+          {% if group.name == "Site Admins" %}
+            <p class="admin-text">Welcome, Site Admin!</p>
+          {% endif %}
+        {% endfor %}
+        <p>You are signed in as: {{user.email}}</p>
+        {% if use.first_name or user.last_name %}
+          <p>Name: {{ user.first_name }} {{ user.last_name }}</p>
+        {% endif %}
+      </div>
+    <div class="bottom-links">
+        <a href="logout"><button type="button" class="btn btn-primary">Logout</button></a>
+        <a href="report"><button type="button" class="btn btn-primary">Make a Report</button></a>
+        <a href="view_reports"><button type="button" class="btn btn-primary">View Reports</button></a>
+      </div>
+      {% else %}
+      <div class="bottom-links">
+        <a href="{% provider_login_url 'google' %}?next=/"><button type="button" class="btn btn-primary">Login with Google</button></a>
+        <a href="report"><button type="button" class="btn btn-secondary">Proceed as Anonymous User</button></a>
+      </div>
+      {% endif %}
+    </div>
+</body>
+<footer class="footer mx-4 mt-5 mb-1 text-center fixed-bottom">
+  <div>
+    <a href="https://docs.google.com/forms/d/e/1FAIpQLSc1qFPk-KSYdx2hEY9gGKhbwbBGG0pVLQAPPFONy5FYL8h65Q/viewform?usp=sf_link" target="_blank">Feedback</a>           
+  </div>
+  <div>
+    <a href="https://studentaffairs.virginia.edu/subsite/fsl/policies-resources" target="_blank">Greek Life Policies</a>
+  </div>
+  <div class="card bg-white text-center">
+    <p class="m-2">This system is a class project, the system is not monitored, and no real information should be submitted. For more information, please visit <a href="https://s24.cs3240.org/project.html" target="_blank">https://s24.cs3240.org/project.html</a></p>
+  </div>
+</footer>

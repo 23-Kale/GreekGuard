@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+{% bootstrap_messages %}
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <title>Report Submission</title>
+   <style>
+    body{
+      background-color: #f5f5f5
+    }
+   </style>
+</head>
+<body>
+<div class="container d-flex flex-column justify-content-center align-items-center" style="min-height: 100vh;">
+    <div class="text-center">
+        {% if error_message %}
+            <div class="alert alert-danger" role="alert">
+                <strong>{{ error_message }}</strong>
+            </div>
+        {% else %}
+            <div class="alert alert-success" role="alert">
+                <strong>Submitted!</strong>
+            </div>
+        {% endif %}
+        {% if form.errors %}
+            <div class="alert alert-warning" role="alert">
+                {{ form.errors }}
+            </div>
+        {% endif %}
+        <a href="/" class="btn btn-primary mt-3">Back to Main Page</a>
+    </div>
+</div>
+</body>
+<footer class="footer mx-4 mt-5 mb-1 text-center fixed-bottom">
+    <div class="card bg-white text-center">
+        <p class="m-2">This system is a class project, the system is not monitored, and no real information should be submitted. For more information, please visit <a href="https://s24.cs3240.org/project.html" target="_blank">https://s24.cs3240.org/project.html</a></p>
+    </div>
+</footer>
+</html>
